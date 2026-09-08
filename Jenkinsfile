@@ -50,10 +50,22 @@ pipeline {
             steps {
                 echo 'Pushing Docker Image...'
 
-                sh '''
-                    docker push \
-                        razdeepak/order-service-jenkins-kubernetes:${BUILD_NUMBER}
-                '''
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'dockerhub',
+                        usernameVariable: 'DOCKER_USERNAME',
+                        passwordVariable: 'DOCKER_PASSWORD'
+                    )
+                ]) {
+                    sh '''
+                        echo "$DOCKER_PASSWORD" | docker login \
+                            -u "$DOCKER_USERNAME" \
+                            --password-stdin
+
+                        docker push \
+                            razdeepak/order-service-jenkins-kubernetes:${BUILD_NUMBER}
+                    '''
+                }
             }
         }
 
@@ -63,12 +75,11 @@ pipeline {
 
                 sh '''
                     kubectl apply -f kubernetes/deployment.yaml
-                    kubectl apply -f kubernetes/service.yaml
 
-                    kubectl set image deployment/jenkins-practice \
-                        jenkins-practice=razdeepak/order-service-jenkins-kubernetes:${BUILD_NUMBER}
+                    kubectl set image deployment/order-service \
+                        order-service=razdeepak/order-service-jenkins-kubernetes:${BUILD_NUMBER}
 
-                    kubectl rollout status deployment/jenkins-practice
+                    kubectl rollout status deployment/order-service
                 '''
             }
         }
