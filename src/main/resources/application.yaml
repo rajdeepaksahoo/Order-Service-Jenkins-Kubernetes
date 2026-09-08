@@ -1,0 +1,84 @@
+server:
+  port: 8082
+  shutdown: graceful
+
+spring:
+  application:
+    name: ORDER-SERVICE
+
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
+
+  boot:
+    admin:
+      client:
+        url: http://admin-server:8085
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+
+    service-url:
+      defaultZone: http://eureka-service:8761/eureka/
+
+    registry-fetch-interval-seconds: 10
+
+  instance:
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 10
+    lease-expiration-duration-in-seconds: 30
+
+management:
+  endpoints:
+    web:
+      base-path: /actuator
+      exposure:
+        include:
+          - health
+          - info
+          - metrics
+          - loggers
+          - threaddump
+
+  endpoint:
+    health:
+      probes:
+        enabled: true
+        add-additional-paths: true
+      show-details: never
+
+    info:
+      enabled: true
+
+    metrics:
+      enabled: true
+
+    loggers:
+      enabled: true
+
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+
+  info:
+    env:
+      enabled: true
+    java:
+      enabled: true
+    os:
+      enabled: true
+
+logging:
+  level:
+    root: INFO
+    com.netflix.discovery: INFO
+    org.springframework.cloud: INFO
+
+info:
+  app:
+    name: ${spring.application.name}
+    description: Order Microservice
+    version: ${project.version}
