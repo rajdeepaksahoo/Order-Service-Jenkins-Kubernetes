@@ -40,7 +40,7 @@ pipeline {
 
                 sh '''
                     docker build \
-                        -t razdeepak/Order-Service-Jenkins-Kubernetes:${BUILD_NUMBER} \
+                        -t razdeepak/order-service-jenkins-kubernetes:${BUILD_NUMBER} \
                         .
                 '''
             }
@@ -52,7 +52,7 @@ pipeline {
 
                 sh '''
                     docker push \
-                        razdeepak/Order-Service-Jenkins-Kubernetes:${BUILD_NUMBER}
+                        razdeepak/order-service-jenkins-kubernetes:${BUILD_NUMBER}
                 '''
             }
         }
@@ -66,7 +66,7 @@ pipeline {
                     kubectl apply -f kubernetes/service.yaml
 
                     kubectl set image deployment/jenkins-practice \
-                        jenkins-practice=razdeepak/Order-Service-Jenkins-Kubernetes:${BUILD_NUMBER}
+                        jenkins-practice=razdeepak/order-service-jenkins-kubernetes:${BUILD_NUMBER}
 
                     kubectl rollout status deployment/jenkins-practice
                 '''
